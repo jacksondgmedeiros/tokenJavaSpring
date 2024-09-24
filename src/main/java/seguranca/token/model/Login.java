@@ -5,9 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import seguranca.token.dto.DadosCadastroLogin;
 
 @Entity
 @Table(name = "login")
+
+//anotações do lombok para a criação de getter,setter, construtor e equals
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +24,9 @@ public class Login {
     private String login;
 
     private String senha;
+
+    public Login(DadosCadastroLogin dados) {
+        this.login = dados.login();
+        this.senha = dados.senha();
+    }
 }
