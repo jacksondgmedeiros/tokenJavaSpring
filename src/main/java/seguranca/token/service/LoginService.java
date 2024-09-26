@@ -26,11 +26,12 @@ public class LoginService {
     }
 
     public List<LoginDTO> obterTodosLogins() {
+
         return converteDados(loginRepository.findAll());
     }
 
     private List<LoginDTO> converteDados(List<Login> logins) {
-        return logins.stream().map(l -> new LoginDTO(l.getId(), l.getLogin(), l.getSenha()))
+        return logins.stream().map(l -> new LoginDTO(l.getId(), l.getLogin()))
                 .collect(Collectors.toList()) ;
     }
 
