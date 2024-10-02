@@ -11,6 +11,7 @@ import seguranca.token.model.Login;
 import seguranca.token.repository.LoginRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +26,18 @@ public class LoginService {
         return ResponseEntity.ok().build();
     }
 
+
+
+    public boolean validaLogin(@RequestBody @Valid DadosCadastroLogin dados) {
+
+        Optional<Login> obterLogin = loginRepository.findByLogin(dados.login());
+        if (obterLogin.isPresent()) {
+            var login = obterLogin.get();
+            return dados.senha().equals(login.getSenha());
+        }
+        return false;
+    }
+
     public List<LoginDTO> obterTodosLogins() {
 
         return converteDados(loginRepository.findAll());
@@ -34,5 +47,7 @@ public class LoginService {
         return logins.stream().map(l -> new LoginDTO(l.getId(), l.getLogin()))
                 .collect(Collectors.toList()) ;
     }
+
+
 
 }
