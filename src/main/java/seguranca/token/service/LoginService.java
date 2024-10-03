@@ -3,6 +3,8 @@ package seguranca.token.service;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import seguranca.token.dto.DadosCadastroLogin;
@@ -20,23 +22,28 @@ public class LoginService {
     @Autowired
     private LoginRepository loginRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public ResponseEntity<LoginDTO> cadastrar(@RequestBody @Valid DadosCadastroLogin dados) {
-        var login = new Login(dados);
+
+        String senhaCriptografada = passwordEncoder.encode(dados.senha());
+        var login = new Login();
         loginRepository.save(login);
         return ResponseEntity.ok().build();
     }
 
 
 
-    public boolean validaLogin(@RequestBody @Valid DadosCadastroLogin dados) {
-
-        Optional<Login> obterLogin = loginRepository.findByLogin(dados.login());
-        if (obterLogin.isPresent()) {
-            var login = obterLogin.get();
-            return dados.senha().equals(login.getSenha());
-        }
-        return false;
-    }
+//    public boolean validaLogin(@RequestBody @Valid DadosCadastroLogin dados) {
+//
+////        UserDetails obterLogin = loginRepository.findByLogin(dados.login());
+////        if (obterLogin.isPresent()) {
+////            var login = obterLogin.get();
+////            return dados.senha().equals(login.getSenha());
+////        }
+////        return false;
+//    }
 
     public List<LoginDTO> obterTodosLogins() {
 

@@ -3,16 +3,15 @@ package seguranca.token.controller;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import seguranca.token.dto.DadosCadastroLogin;
 import seguranca.token.dto.LoginDTO;
-import seguranca.token.model.Login;
-import seguranca.token.repository.LoginRepository;
 import seguranca.token.service.LoginService;
-
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -21,6 +20,9 @@ public class LoginController {
 
     @Autowired
     private LoginService servico;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
 
     @PostMapping("")
@@ -31,14 +33,20 @@ public class LoginController {
 
     @PostMapping("/autenticar")
     public ResponseEntity<?> login(@RequestBody @Valid DadosCadastroLogin dados){
-        String login = dados.login();
-        String senha = dados.senha();
 
-        if (servico.validaLogin(dados)){
-            return ResponseEntity.ok(Collections.singletonMap("success", true));
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("success", false));
-        }
+
+        var token = new UsernamePasswordAuthenticationToken(dados.login(), dados.senha());
+        var authentication = authenticationManager.authenticate(token);
+
+        return ResponseEntity.ok().build();
+//        String login = dados.login();
+//        String senha = dados.senha();
+//
+//        if (servico.validaLogin(dados)){
+//            return ResponseEntity.ok(Collections.singletonMap("success", true));
+//        } else {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("success", false));
+//        }
     }
 
     @GetMapping
