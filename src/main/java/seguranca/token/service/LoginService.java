@@ -28,22 +28,30 @@ public class LoginService {
     public ResponseEntity<LoginDTO> cadastrar(@RequestBody @Valid DadosCadastroLogin dados) {
 
         String senhaCriptografada = passwordEncoder.encode(dados.senha());
-        var login = new Login();
+        DadosCadastroLogin dadosCadastroLoginCriptografado = new DadosCadastroLogin(dados.login(), senhaCriptografada);
+        var login = new Login(dadosCadastroLoginCriptografado);
         loginRepository.save(login);
         return ResponseEntity.ok().build();
     }
 
 
 
-//    public boolean validaLogin(@RequestBody @Valid DadosCadastroLogin dados) {
-//
-////        UserDetails obterLogin = loginRepository.findByLogin(dados.login());
-////        if (obterLogin.isPresent()) {
-////            var login = obterLogin.get();
-////            return dados.senha().equals(login.getSenha());
-////        }
-////        return false;
-//    }
+    public DadosCadastroLogin validaLogin(@RequestBody @Valid DadosCadastroLogin dados) {
+
+        UserDetails obterLogin = loginRepository.findByLogin(dados.login());
+        if (obterLogin != null) {
+            if (passwordEncoder.matches(dados.senha(), obterLogin.getPassword())) {
+                return new DadosCadastroLogin(obterLogin.getUsername(), obterLogin.getPassword());
+            }
+            else {
+                throw new RuntimeException("Senha incorreta");
+
+            }
+        }else {
+            throw new RuntimeException("Login Não encontrado");
+        }
+
+    }
 
     public List<LoginDTO> obterTodosLogins() {
 
