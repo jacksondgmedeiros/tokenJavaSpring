@@ -13,7 +13,6 @@ import seguranca.token.model.Login;
 import seguranca.token.repository.LoginRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +23,8 @@ public class LoginService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+
 
     public ResponseEntity<LoginDTO> cadastrar(@RequestBody @Valid DadosCadastroLogin dados) {
 
@@ -36,12 +37,13 @@ public class LoginService {
 
 
 
-    public DadosCadastroLogin validaLogin(@RequestBody @Valid DadosCadastroLogin dados) {
+    public ResponseEntity<DadosCadastroLogin> validaLogin(@RequestBody @Valid DadosCadastroLogin dados) {
 
         UserDetails obterLogin = loginRepository.findByLogin(dados.login());
+
         if (obterLogin != null) {
             if (passwordEncoder.matches(dados.senha(), obterLogin.getPassword())) {
-                return new DadosCadastroLogin(obterLogin.getUsername(), obterLogin.getPassword());
+                return ResponseEntity.ok().build();
             }
             else {
                 throw new RuntimeException("Senha incorreta");
