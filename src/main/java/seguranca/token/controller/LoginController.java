@@ -31,7 +31,7 @@ public class LoginController {
     private TokenServico tokenServico;
 
 
-    @PostMapping("")
+    @PostMapping("/cadastrar")
     @Transactional
     public ResponseEntity<?> cadastrar(@RequestBody @Valid DadosCadastroLogin dados) {
         return servico.cadastrar(dados);
