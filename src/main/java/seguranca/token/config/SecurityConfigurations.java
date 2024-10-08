@@ -27,7 +27,7 @@ public class SecurityConfigurations{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults()) // habilita a configuração de CORS, linha adicionada no código sem alterar
+                .cors(Customizer.withDefaults()) // habilita a configuração de CORS, linha adicionada no código sem alterar o resto
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ).authorizeHttpRequests(req -> {
                     req.requestMatchers("/login/autenticar", "/login/cadastrar").permitAll();
